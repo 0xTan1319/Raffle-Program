@@ -20,9 +20,11 @@ const GLOBAL_AUTHORITY_SEED = "global-authority";
 
 const PROGRAM_ID = "DfpiHaschjki2b4wCwVkNSPsh9L4wvC9h15eJRPVaHh8";
 const BOOGA_TOKEN_MINT = new PublicKey("AsACVnuMa5jpmfp3BjArmb2qWg5A6HBkuXePwT37RrLY");
+const ZION_TOKEN_MINT = new PublicKey("AsACVnuMa5jpmfp3BjArmb2qWg5A6HBkuXePwT37RrLY");
 const RAFFLE_SIZE = 162136;
 const DECIMALS = 1000000000;
 const BOOGA_DECIMALS = 100;
+const ZION_DECIMALS = 1000000000;
 
 anchor.setProvider(anchor.Provider.local(web3.clusterApiUrl('devnet')));
 const solConnection = anchor.getProvider().connection;
@@ -92,7 +94,8 @@ export const createRaffle = async (
     userAddress: PublicKey,
     nft_mint: PublicKey,
     ticketPriceSol: number,
-    ticketPriceSpl: number,
+    ticketPriceBooga: number,
+    ticketPriceZion: number,
     endTimestamp: number,
     winnerCount: number,
     whitelisted: number,
@@ -135,12 +138,13 @@ export const createRaffle = async (
         solConnection,
         userAddress,
         userAddress,
-        [BOOGA_TOKEN_MINT]
+        [BOOGA_TOKEN_MINT, ZION_TOKEN_MINT]
     );
     const tx = await program.rpc.createRaffle(
         bump,
+        new anchor.BN(ticketPriceBooga * BOOGA_DECIMALS),
+        new anchor.BN(ticketPriceZion * ZION_DECIMALS),
         new anchor.BN(ticketPriceSol * DECIMALS),
-        new anchor.BN(ticketPriceSpl * BOOGA_DECIMALS),
         new anchor.BN(endTimestamp),
         new anchor.BN(winnerCount),
         new anchor.BN(whitelisted),
@@ -208,8 +212,15 @@ export const buyTicket = async (
     // const userFlwr = await getTokenAccountBalance()
     // if (totalAmountSpl < )
 
-    let userTokenAccount = await getAssociatedTokenAccount(userAddress, BOOGA_TOKEN_MINT);
-    let creatorTokenAccount = await getAssociatedTokenAccount(creator, BOOGA_TOKEN_MINT);
+    let creatorTokenAccount;
+    let userTokenAccount;
+    if (raffleState.ticketPriceZion > 0) {
+        let userTokenAccount = await getAssociatedTokenAccount(userAddress, ZION_TOKEN_MINT);
+        let creatorTokenAccount = await getAssociatedTokenAccount(creator, ZION_TOKEN_MINT);
+    } else {
+        let userTokenAccount = await getAssociatedTokenAccount(userAddress, BOOGA_TOKEN_MINT);
+        let creatorTokenAccount = await getAssociatedTokenAccount(creator, BOOGA_TOKEN_MINT);
+    }
 
     const tx = await program.rpc.buyTickets(
         bump,

@@ -31,7 +31,8 @@ pub mod raffle {
     pub fn create_raffle(
         ctx: Context<CreateRaffle>,
         global_bump: u8,
-        ticket_price_spl: u64,
+        ticket_price_booga: u64,
+        ticket_price_zion: u64,
         ticket_price_sol: u64,
         end_timestamp: i64,
         winner_count: u64,
@@ -65,7 +66,8 @@ pub mod raffle {
 
         raffle.creator = ctx.accounts.admin.key();
         raffle.nft_mint = ctx.accounts.nft_mint_address.key();
-        raffle.ticket_price_spl = ticket_price_spl;
+        raffle.ticket_price_booga = ticket_price_booga;
+        raffle.ticket_price_zion = ticket_price_zion;
         raffle.ticket_price_sol = ticket_price_sol;
         raffle.end_timestamp = end_timestamp;
         raffle.max_entrants = max_entrants;
@@ -106,12 +108,10 @@ pub mod raffle {
             return Err(RaffleError::NotEnoughTicketsLeft.into());
         }
 
-        let total_amount_spl = amount * raffle.ticket_price_spl;
+        let total_amount_booga = amount * raffle.ticket_price_booga;
+        let total_amount_zion = amount * raffle.ticket_price_zion;
         let total_amount_sol = amount * raffle.ticket_price_sol;
 
-        if ctx.accounts.user_token_account.amount < total_amount_spl {
-            return Err(RaffleError::NotEnoughToken.into());
-        }
         if ctx.accounts.global_authority.to_account_info().lamports() < total_amount_sol {
             return Err(RaffleError::NotEnoughSOL.into());
         }
@@ -137,7 +137,7 @@ pub mod raffle {
         let dest_account_info = &mut &ctx.accounts.creator_token_account;
         let token_program = &mut &ctx.accounts.token_program;
 
-        if total_amount_spl > 0 {
+        if total_amount_booga > 0 {
             let cpi_accounts = Transfer {
                 from: src_account_info.to_account_info().clone(),
                 to: dest_account_info.to_account_info().clone(),
@@ -145,7 +145,19 @@ pub mod raffle {
             };
             token::transfer(
                 CpiContext::new(token_program.clone().to_account_info(), cpi_accounts),
-                total_amount_spl,
+                total_amount_booga,
+            )?;
+        }
+
+        if total_amount_zion > 0 {
+            let cpi_accounts = Transfer {
+                from: src_account_info.to_account_info().clone(),
+                to: dest_account_info.to_account_info().clone(),
+                authority: ctx.accounts.buyer.to_account_info().clone(),
+            };
+            token::transfer(
+                CpiContext::new(token_program.clone().to_account_info(), cpi_accounts),
+                total_amount_zion,
             )?;
         }
 
@@ -349,15 +361,11 @@ pub struct BuyTickets<'info> {
 
     #[account(
         mut,
-        constraint = creator_token_account.mint == REWARD_TOKEN_MINT_PUBKEY.parse::<Pubkey>().unwrap(),
         constraint = creator_token_account.owner == creator.key(),
     )]
     pub creator_token_account: Account<'info, TokenAccount>,
 
-    #[account(
-        mut,
-        constraint = user_token_account.mint == REWARD_TOKEN_MINT_PUBKEY.parse::<Pubkey>().unwrap(),
-    )]
+    #[account(mut)]
     pub user_token_account: CpiAccount<'info, TokenAccount>,
 
     pub token_program: Program<'info, Token>,

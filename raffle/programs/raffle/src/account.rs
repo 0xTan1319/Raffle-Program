@@ -21,7 +21,8 @@ pub struct RafflePool {
     pub no_repeat: u64,                     //8
     pub max_entrants: u64,                  //8
     pub end_timestamp: i64,                 //8
-    pub ticket_price_spl: u64,              //8
+    pub ticket_price_booga: u64,            //8
+    pub ticket_price_zion: u64,             //8
     pub ticket_price_sol: u64,              //8
     pub whitelisted: u64,                   //8
     pub claimed_winner: [u64; MAX_WINNERS], //50*8
@@ -34,16 +35,17 @@ impl Default for RafflePool {
     fn default() -> RafflePool {
         RafflePool {
             creator: Pubkey::default(),
+            nft_mint: Pubkey::default(),
             count: 0,
             winner_count: 0,
             no_repeat: 0,
             max_entrants: 0,
             end_timestamp: 0,
-            ticket_price_spl: 0,
+            ticket_price_booga: 0,
+            ticket_price_zion: 0,
             ticket_price_sol: 0,
             whitelisted: 0,
             claimed_winner: [0; MAX_WINNERS],
-            nft_mint: Pubkey::default(),
             winner: [Pubkey::default(); MAX_WINNERS],
             entrants: [Pubkey::default(); MAX_ENTRANTS],
         }
