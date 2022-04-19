@@ -22,12 +22,29 @@ declare_id!("DfpiHaschjki2b4wCwVkNSPsh9L4wvC9h15eJRPVaHh8");
 #[program]
 pub mod raffle {
     use super::*;
+    /**
+     * @dev Initialize the project
+     */
     pub fn initialize(ctx: Context<Initialize>, _global_bump: u8) -> ProgramResult {
         let global_authority = &mut ctx.accounts.global_authority;
         global_authority.super_admin = ctx.accounts.admin.key();
         Ok(())
     }
 
+    /**
+     * @dev Create new raffle with new arguements
+     * @Context has admin, global_authority accounts.
+     * and zero-account Raffle, owner's nft ATA and global_authority's nft ATA
+     * and nft mint address
+     * @param global_bump: global authority's bump
+     * @param ticket_price_booga: ticket price by booga
+     * @param ticket_price_zion: ticket price by zion
+     * @param ticket_price_sol: ticket price by sol
+     * @param end_timestamp: the end time of raffle
+     * @param winner_count: how many winners will be get prize
+     * @param whitelisted: if 1: winner will get the nft, if 0: winners get whitelist spot
+     * @param max_entrants: entrants amount to take part in this raffle
+     */
     pub fn create_raffle(
         ctx: Context<CreateRaffle>,
         global_bump: u8,
@@ -77,6 +94,11 @@ pub mod raffle {
         Ok(())
     }
 
+    /**
+     * @dev Update Raffle Period
+     * @Context has admin and raffle accounts
+     * @param end_timestamp: new end_timestamp
+     */
     pub fn update_raffle_period(ctx: Context<UpdateRaffle>, end_timestamp: i64) -> ProgramResult {
         let timestamp = Clock::get()?.unix_timestamp;
         let mut raffle = ctx.accounts.raffle.load_mut()?;
@@ -97,6 +119,13 @@ pub mod raffle {
         Ok(())
     }
 
+    /**
+     * @dev Buy tickets functions
+     * @Context has buyer and raffle's account.
+     * global_authority and creator address and their reap token ATAs
+     * @param global_bump: global_authority's bump
+     * @param amount: the amount of the tickets
+     */
     pub fn buy_tickets(ctx: Context<BuyTickets>, global_bump: u8, amount: u64) -> ProgramResult {
         let timestamp = Clock::get()?.unix_timestamp;
         let mut raffle = ctx.accounts.raffle.load_mut()?;
@@ -173,6 +202,10 @@ pub mod raffle {
         Ok(())
     }
 
+    /**
+     * @dev Reaveal winner function
+     * @Context has buyer and raffle account address
+     */
     pub fn reveal_winner(ctx: Context<RevealWinner>) -> ProgramResult {
         let timestamp = Clock::get()?.unix_timestamp;
         let mut raffle = ctx.accounts.raffle.load_mut()?;
@@ -201,6 +234,12 @@ pub mod raffle {
         Ok(())
     }
 
+    /**
+     * @dev Claim reward function
+     * @Context has claimer and global_authority account
+     * raffle account and the nft ATA of claimer and global_authority.
+     * @param global_bump: the global_authority's bump
+     */
     pub fn claim_reward(ctx: Context<ClaimReward>, global_bump: u8) -> ProgramResult {
         let timestamp = Clock::get()?.unix_timestamp;
         let mut raffle = ctx.accounts.raffle.load_mut()?;
@@ -241,6 +280,12 @@ pub mod raffle {
         Ok(())
     }
 
+    /**
+     * @dev Withdraw NFT function
+     * @Context has claimer and global_authority account
+     * raffle account and creator's nft ATA and global_authority's nft ATA
+     * @param global_bump: global_authority's bump
+     */
     pub fn withdraw_nft(ctx: Context<WithdrawNft>, global_bump: u8) -> ProgramResult {
         let timestamp = Clock::get()?.unix_timestamp;
         let raffle = ctx.accounts.raffle.load_mut()?;

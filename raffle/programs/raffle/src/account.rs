@@ -13,7 +13,7 @@ pub struct GlobalPool {
 
 #[account(zero_copy)]
 pub struct RafflePool {
-    // 72+64+32*5000+40*50 = 162136
+    // 72+64+32*5000+40*50 = 162144
     pub creator: Pubkey,                    //32
     pub nft_mint: Pubkey,                   //32
     pub count: u64,                         //8

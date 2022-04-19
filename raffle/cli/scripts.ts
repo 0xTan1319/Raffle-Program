@@ -21,7 +21,7 @@ const GLOBAL_AUTHORITY_SEED = "global-authority";
 const PROGRAM_ID = "DfpiHaschjki2b4wCwVkNSPsh9L4wvC9h15eJRPVaHh8";
 const BOOGA_TOKEN_MINT = new PublicKey("AsACVnuMa5jpmfp3BjArmb2qWg5A6HBkuXePwT37RrLY");
 const ZION_TOKEN_MINT = new PublicKey("AsACVnuMa5jpmfp3BjArmb2qWg5A6HBkuXePwT37RrLY");
-const RAFFLE_SIZE = 162136;
+const RAFFLE_SIZE = 162144;
 const DECIMALS = 1000000000;
 const BOOGA_DECIMALS = 100;
 const ZION_DECIMALS = 1000000000;
@@ -90,6 +90,18 @@ export const initProject = async () => {
     return true;
 }
 
+/**
+ * @dev CreateRaffle function
+ * @param userAddress The raffle creator's address
+ * @param nft_mint The nft_mint address
+ * @param ticketPriceSol The ticket price by SOL 
+ * @param ticketPriceBooga The ticket price by BOOGA token
+ * @param ticketPriceZion The ticket price by ZION token
+ * @param endTimestamp The raffle end timestamp
+ * @param winnerCount The winner_cap of this raffle
+ * @param whitelisted The variable if 1: winner get NFt as prize and if 0: get whitelist spot
+ * @param max The max entrants of this raffle
+ */
 export const createRaffle = async (
     userAddress: PublicKey,
     nft_mint: PublicKey,
@@ -172,6 +184,12 @@ export const createRaffle = async (
 
 }
 
+/**
+ * @dev Update Raffle Period
+ * @param userAddress The user's address
+ * @param nft_mint The nft_mint address
+ * @param endTimestamp The new endtimestamp
+ */
 export const updateRafflePeriod = async (
     userAddress: PublicKey,
     nft_mint: PublicKey,
@@ -192,6 +210,12 @@ export const updateRafflePeriod = async (
     console.log("txHash =", tx);
 }
 
+/**
+ * @dev BuyTicket function
+ * @param userAddress The use's address
+ * @param nft_mint The nft_mint address
+ * @param amount The amount of ticket to buy
+ */
 export const buyTicket = async (
     userAddress: PublicKey,
     nft_mint: PublicKey,
@@ -245,6 +269,11 @@ export const buyTicket = async (
 
 }
 
+/**
+ * @dev RevealWinner function
+ * @param userAddress The user's address to call this function
+ * @param nft_mint The nft_mint address
+ */
 export const revealWinner = async (
     userAddress: PublicKey,
     nft_mint: PublicKey,
@@ -264,6 +293,11 @@ export const revealWinner = async (
     console.log("txHash =", tx);
 }
 
+/**
+ * @dev ClaimReward function
+ * @param userAddress The winner's address
+ * @param nft_mint The nft_mint address
+ */
 export const claimReward = async (
     userAddress: PublicKey,
     nft_mint: PublicKey,
@@ -307,6 +341,11 @@ export const claimReward = async (
 
 }
 
+/**
+ * @dev WithdrawNFT function
+ * @param userAddress The creator's address
+ * @param nft_mint The nft_mint address
+ */
 export const withdrawNft = async (
     userAddress: PublicKey,
     nft_mint: PublicKey,
