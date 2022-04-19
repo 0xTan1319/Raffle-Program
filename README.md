@@ -1,5 +1,5 @@
 # Raffle-program
-This is the raffle project that winners can receive the raffle NFT or winners can buy NFTs by half price by buying tickets. You can buy tickets by $Sol and $FLWR token.
+This is the raffle project that winners can receive the raffle NFT or winners can buy NFTs by half price by buying tickets. You can buy tickets by $Sol, $BOOGA and $ZION token.
 
 ## Install Dependencies
 - Install `node` and `yarn`
@@ -31,7 +31,8 @@ When the admin creates a raffle, call the `creatRaffle` function, the NFT will b
     userAddress: PublicKey,
     nft_mint: PublicKey,
     ticketPriceSol: number,
-    ticketPriceSpl: number,
+    ticketPriceBooga: number,
+    ticketPriceZion: number,
     endTimestamp: number,
     winnerCount: number,
     whitelisted: number,
@@ -76,4 +77,3 @@ Winners can claim rewards by calling `claimReward` function.
     userAddress: PublicKey,
     nft_mint: PublicKey
 )`
-
