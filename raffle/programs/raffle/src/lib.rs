@@ -58,6 +58,7 @@ pub mod raffle {
     ) -> ProgramResult {
         let mut raffle = ctx.accounts.raffle.load_init()?;
         let timestamp = Clock::get()?.unix_timestamp;
+        msg!("Timestamp: {}", timestamp);
 
         if max_entrants > 5000 {
             return Err(RaffleError::MaxEntrantsTooLarge.into());
@@ -86,6 +87,7 @@ pub mod raffle {
         raffle.ticket_price_booga = ticket_price_booga;
         raffle.ticket_price_zion = ticket_price_zion;
         raffle.ticket_price_sol = ticket_price_sol;
+        raffle.start_timestamp = timestamp;
         raffle.end_timestamp = end_timestamp;
         raffle.max_entrants = max_entrants;
         raffle.winner_count = winner_count;
@@ -102,7 +104,6 @@ pub mod raffle {
     pub fn update_raffle_period(ctx: Context<UpdateRaffle>, end_timestamp: i64) -> ProgramResult {
         let timestamp = Clock::get()?.unix_timestamp;
         let mut raffle = ctx.accounts.raffle.load_mut()?;
-
         if timestamp > end_timestamp {
             return Err(RaffleError::EndTimeError.into());
         }
@@ -141,7 +142,7 @@ pub mod raffle {
         let total_amount_zion = amount * raffle.ticket_price_zion;
         let total_amount_sol = amount * raffle.ticket_price_sol;
 
-        if ctx.accounts.global_authority.to_account_info().lamports() < total_amount_sol {
+        if ctx.accounts.buyer.to_account_info().lamports() < total_amount_sol {
             return Err(RaffleError::NotEnoughSOL.into());
         }
         if raffle.count == 0 {
@@ -213,6 +214,9 @@ pub mod raffle {
         if timestamp < raffle.end_timestamp {
             return Err(RaffleError::RaffleNotEnded.into());
         }
+        if raffle.count < raffle.winner_count {
+            raffle.winner_count = raffle.count;
+        }
 
         for j in 0..raffle.winner_count {
             let (player_address, bump) = Pubkey::find_program_address(
@@ -270,6 +274,7 @@ pub mod raffle {
                 ),
                 1,
             )?;
+            raffle.claimed_winner[0] = 1;
         } else {
             for i in 0..raffle.winner_count {
                 if raffle.winner[i as usize] == ctx.accounts.claimer.key() {
@@ -288,7 +293,9 @@ pub mod raffle {
      */
     pub fn withdraw_nft(ctx: Context<WithdrawNft>, global_bump: u8) -> ProgramResult {
         let timestamp = Clock::get()?.unix_timestamp;
-        let raffle = ctx.accounts.raffle.load_mut()?;
+        let mut raffle = ctx.accounts.raffle.load_mut()?;
+        let ts = timestamp;
+        msg!("Timestamp: {}", ts);
 
         if timestamp < raffle.end_timestamp {
             return Err(RaffleError::RaffleNotEnded.into());
@@ -320,6 +327,8 @@ pub mod raffle {
             ),
             1,
         )?;
+        raffle.whitelisted = 3;
+
         Ok(())
     }
 }

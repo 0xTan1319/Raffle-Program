@@ -52,15 +52,14 @@ const main = async () => {
     console.log('GlobalAuthority: ', globalAuthority.toBase58());
 
     // await initProject();
-    // await createRaffle(payer.publicKey, new PublicKey("HyomvqtLBjHhPty1P6dKzNf5gNow9qbfGkxj69pqBD8Z"), 1, 0, 1649355000, 10, 1, 100);
+    await createRaffle(payer.publicKey, new PublicKey("5E5PGFEhgN2hFq488ERAA1Lm4xyUJifxRDKGE5172gg1"), 1, 0, 0, 1650431800, 1, 1, 100);
     // await updateRafflePeriod(payer.publicKey, new PublicKey("HyomvqtLBjHhPty1P6dKzNf5gNow9qbfGkxj69pqBD8Z"), 1649355012);
     // await buyTicket(payer.publicKey, new PublicKey("14njy5aKYoAvz3Ut8ojfYULhEKbBDXcXidZ3xK6jZs7U"), 10);
     // await revealWinner(payer.publicKey, new PublicKey("14njy5aKYoAvz3Ut8ojfYULhEKbBDXcXidZ3xK6jZs7U"));
     // await claimReward(payer.publicKey, new PublicKey("14njy5aKYoAvz3Ut8ojfYULhEKbBDXcXidZ3xK6jZs7U"));
-    await withdrawNft(payer.publicKey, new PublicKey("HyomvqtLBjHhPty1P6dKzNf5gNow9qbfGkxj69pqBD8Z"));
-
-    const pool = await getRaffleState(new PublicKey("HyomvqtLBjHhPty1P6dKzNf5gNow9qbfGkxj69pqBD8Z"));
-    console.log(pool.endTimestamp.toNumber());
+    // await withdrawNft(payer.publicKey, new PublicKey("5E5PGFEhgN2hFq488ERAA1Lm4xyUJifxRDKGE5172gg1"));
+    // const pool = await getRaffleState(new PublicKey("5E5PGFEhgN2hFq488ERAA1Lm4xyUJifxRDKGE5172gg1"));
+    // console.log(pool.endTimestamp.toNumber());
 }
 
 /**
@@ -119,22 +118,6 @@ export const createRaffle = async (
         program.programId
     );
 
-    let raffle = await PublicKey.createWithSeed(
-        userAddress,
-        nft_mint.toBase58().slice(0, 10),
-        program.programId,
-    );
-
-    let ix = SystemProgram.createAccountWithSeed({
-        fromPubkey: userAddress,
-        basePubkey: userAddress,
-        seed: nft_mint.toBase58().slice(0, 10),
-        newAccountPubkey: raffle,
-        lamports: await solConnection.getMinimumBalanceForRentExemption(RAFFLE_SIZE),
-        space: RAFFLE_SIZE,
-        programId: program.programId,
-    });
-
     let ownerNftAccount = await getAssociatedTokenAccount(userAddress, nft_mint);
 
     let ix0 = await getATokenAccountsNeedCreate(
@@ -152,6 +135,31 @@ export const createRaffle = async (
         userAddress,
         [BOOGA_TOKEN_MINT, ZION_TOKEN_MINT]
     );
+
+    let raffle;
+    let i;
+
+    for (i = 10; i > 0; i--) {
+        raffle = await PublicKey.createWithSeed(
+            userAddress,
+            nft_mint.toBase58().slice(0, i),
+            program.programId,
+        );
+        let state = await getStateByKey(raffle);
+        if (state === null) {
+            console.log(i);
+            break;
+        }
+    }
+    let ix = SystemProgram.createAccountWithSeed({
+        fromPubkey: userAddress,
+        basePubkey: userAddress,
+        seed: nft_mint.toBase58().slice(0, i),
+        newAccountPubkey: raffle,
+        lamports: await solConnection.getMinimumBalanceForRentExemption(RAFFLE_SIZE),
+        space: RAFFLE_SIZE,
+        programId: program.programId,
+    });
     const tx = await program.rpc.createRaffle(
         bump,
         new anchor.BN(ticketPriceBooga * BOOGA_DECIMALS),
@@ -364,25 +372,43 @@ export const withdrawNft = async (
         userAddress,
         [nft_mint]
     );
-    console.log("Creator's NFT Account: ", ix0.destinationAccounts[0]);
 
-    const tx = await program.rpc.withdrawNft(
-        bump,
-        {
-            accounts: {
-                claimer: userAddress,
-                globalAuthority,
-                raffle: raffleKey,
-                claimerNftTokenAccount: ix0.destinationAccounts[0],
-                srcNftTokenAccount,
-                nftMintAddress: nft_mint,
-                tokenProgram: TOKEN_PROGRAM_ID,
-            },
-            instructions: [
-                ...ix0.instructions
-            ],
-            signers: [],
-        });
+    let tx;
+    if (ix0.instructions.length === 0) {
+        tx = await program.rpc.withdrawNft(
+            bump,
+            {
+                accounts: {
+                    claimer: userAddress,
+                    globalAuthority,
+                    raffle: raffleKey,
+                    claimerNftTokenAccount: ix0.destinationAccounts[0],
+                    srcNftTokenAccount,
+                    nftMintAddress: nft_mint,
+                    tokenProgram: TOKEN_PROGRAM_ID,
+                },
+                signers: [],
+            });
+    } else {
+        tx = await program.rpc.withdrawNft(
+            bump,
+            {
+                accounts: {
+                    claimer: userAddress,
+                    globalAuthority,
+                    raffle: raffleKey,
+                    claimerNftTokenAccount: ix0.destinationAccounts[0],
+                    srcNftTokenAccount,
+                    nftMintAddress: nft_mint,
+                    tokenProgram: TOKEN_PROGRAM_ID,
+                },
+                instructions: [
+                    ...ix0.instructions
+                ],
+                signers: [],
+            });
+    }
+
     await solConnection.confirmTransaction(tx, "confirmed");
 
     console.log("txHash =", tx);
@@ -408,9 +434,19 @@ export const getRaffleKey = async (
             ]
         }
     );
-    console.log(poolAccounts);
+    // console.log(poolAccounts);
     if (poolAccounts.length !== 0) {
-        let raffleKey = poolAccounts[0].pubkey;
+        let len = poolAccounts.length;
+        console.log(len);
+        let max = 0;
+        let maxId = 0;
+        for (let i = 0; i < len; i++) {
+            let state = await getStateByKey(poolAccounts[i].pubkey);
+            if (state.endTimestamp.toNumber() > max) {
+                maxId = i;
+            }
+        }
+        let raffleKey = poolAccounts[maxId].pubkey;
         return raffleKey;
     } else {
         return null;
@@ -448,6 +484,17 @@ export const getRaffleState = async (
             return null;
         }
     } else {
+        return null;
+    }
+}
+
+export const getStateByKey = async (
+    raffleKey: PublicKey
+): Promise<RafflePool | null> => {
+    try {
+        let rentalState = await program.account.rafflePool.fetch(raffleKey);
+        return rentalState as RafflePool;
+    } catch {
         return null;
     }
 }

@@ -78,7 +78,11 @@
           "type": "u8"
         },
         {
-          "name": "ticketPriceSpl",
+          "name": "ticketPriceBooga",
+          "type": "u64"
+        },
+        {
+          "name": "ticketPriceZion",
           "type": "u64"
         },
         {
@@ -335,7 +339,11 @@
             "type": "i64"
           },
           {
-            "name": "ticketPriceSpl",
+            "name": "ticketPriceBooga",
+            "type": "u64"
+          },
+          {
+            "name": "ticketPriceZion",
             "type": "u64"
           },
           {
