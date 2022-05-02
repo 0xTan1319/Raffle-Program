@@ -64,12 +64,12 @@ buyTicket(
 )
 ```
 When users want to see the winners, call `revealWinner` function.
-
-`revealWinner(
+```js
+revealWinner(
     userAddress: PublicKey,
     nft_mint: PublicKey
-)`
-
+)
+```
 ### - As the Winner of Raffle
 Winners can claim rewards by calling `claimReward` function.
 ```js
