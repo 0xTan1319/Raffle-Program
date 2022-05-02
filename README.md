@@ -26,8 +26,8 @@ For the first time use, the Smart Contract Owner should `initialize` the Smart C
 ### - As the Creator of Raffle
 The NFTs will be stored in the globalAuthority address.
 When the admin creates a raffle, call the `creatRaffle` function, the NFT will be sent to the PDA and the data of this raffle is stored on blockchain.
-
-`creatRaffle(
+```js
+creatRaffle(
     userAddress: PublicKey,
     nft_mint: PublicKey,
     ticketPriceSol: number,
@@ -37,32 +37,32 @@ When the admin creates a raffle, call the `creatRaffle` function, the NFT will b
     winnerCount: number,
     whitelisted: number,
     max: number
-)`
-
+)
+```
 The creator can update the period of the raffle he wants.
-
-`updateRafflePeriod(
+```js
+updateRafflePeriod(
     userAddress: PublicKey,
     nft_mint: PublicKey,
     endTimestamp: number
-)`
-
+)
+```
 The creator can withdraw NFT from the PDA if nobody buys tickets and the time exceeds the endTime of raffle. 
-
-`withdrawNft(
+```js
+withdrawNft(
     userAddress: PublicKey,
     nft_mint: PublicKey
-)`
-
+)
+```
 ### - As the User of Raffle
 When users buy tickets, call the `buyTicket` function, users will send $Sol and $FLWR token to the raffle creator.
-
-`buyTicket(
+```js
+buyTicket(
     userAddress: PublicKey,
     nft_mint: PublicKey,
     amount: number
-)`
-
+)
+```
 When users want to see the winners, call `revealWinner` function.
 
 `revealWinner(
@@ -72,8 +72,9 @@ When users want to see the winners, call `revealWinner` function.
 
 ### - As the Winner of Raffle
 Winners can claim rewards by calling `claimReward` function.
-
-`claimReward(
+```js
+claimReward(
     userAddress: PublicKey,
     nft_mint: PublicKey
-)`
+)
+```
