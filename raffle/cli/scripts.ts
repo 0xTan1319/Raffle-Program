@@ -18,10 +18,10 @@ import { Raffle } from '../target/types/raffle';
 
 const GLOBAL_AUTHORITY_SEED = "global-authority";
 
-const PROGRAM_ID = "DfpiHaschjki2b4wCwVkNSPsh9L4wvC9h15eJRPVaHh8";
+const PROGRAM_ID = "Hd6vBon1NRw2ksRKEbY7ZB6PqYdKBseMdhSbvA4zpAtw";
 const BOOGA_TOKEN_MINT = new PublicKey("AsACVnuMa5jpmfp3BjArmb2qWg5A6HBkuXePwT37RrLY");
 const ZION_TOKEN_MINT = new PublicKey("AsACVnuMa5jpmfp3BjArmb2qWg5A6HBkuXePwT37RrLY");
-const RAFFLE_SIZE = 162144;
+const RAFFLE_SIZE = 66152;
 const DECIMALS = 1000000000;
 const BOOGA_DECIMALS = 100;
 const ZION_DECIMALS = 1000000000;
@@ -52,12 +52,12 @@ const main = async () => {
     console.log('GlobalAuthority: ', globalAuthority.toBase58());
 
     // await initProject();
-    await createRaffle(payer.publicKey, new PublicKey("5E5PGFEhgN2hFq488ERAA1Lm4xyUJifxRDKGE5172gg1"), 1, 0, 0, 1650431800, 1, 1, 100);
+    await createRaffle(payer.publicKey, new PublicKey("GF4XmpVKCf9aozU5igmr9sKNzDBkjvmiWujx8uC7Bnp4"), 1, 0, 0, 1652076787, 1, 1, 100);
     // await updateRafflePeriod(payer.publicKey, new PublicKey("HyomvqtLBjHhPty1P6dKzNf5gNow9qbfGkxj69pqBD8Z"), 1649355012);
     // await buyTicket(payer.publicKey, new PublicKey("14njy5aKYoAvz3Ut8ojfYULhEKbBDXcXidZ3xK6jZs7U"), 10);
     // await revealWinner(payer.publicKey, new PublicKey("14njy5aKYoAvz3Ut8ojfYULhEKbBDXcXidZ3xK6jZs7U"));
     // await claimReward(payer.publicKey, new PublicKey("14njy5aKYoAvz3Ut8ojfYULhEKbBDXcXidZ3xK6jZs7U"));
-    // await withdrawNft(payer.publicKey, new PublicKey("5E5PGFEhgN2hFq488ERAA1Lm4xyUJifxRDKGE5172gg1"));
+    // await withdrawNft(payer.publicKey, new PublicKey("GF4XmpVKCf9aozU5igmr9sKNzDBkjvmiWujx8uC7Bnp4"));
     // const pool = await getRaffleState(new PublicKey("5E5PGFEhgN2hFq488ERAA1Lm4xyUJifxRDKGE5172gg1"));
     // console.log(pool.endTimestamp.toNumber());
 }
@@ -434,7 +434,6 @@ export const getRaffleKey = async (
             ]
         }
     );
-    // console.log(poolAccounts);
     if (poolAccounts.length !== 0) {
         let len = poolAccounts.length;
         console.log(len);
@@ -443,6 +442,7 @@ export const getRaffleKey = async (
         for (let i = 0; i < len; i++) {
             let state = await getStateByKey(poolAccounts[i].pubkey);
             if (state.endTimestamp.toNumber() > max) {
+                max = state.endTimestamp.toNumber();
                 maxId = i;
             }
         }
@@ -487,7 +487,6 @@ export const getRaffleState = async (
         return null;
     }
 }
-
 export const getStateByKey = async (
     raffleKey: PublicKey
 ): Promise<RafflePool | null> => {
@@ -498,7 +497,6 @@ export const getStateByKey = async (
         return null;
     }
 }
-
 const getAssociatedTokenAccount = async (ownerPubkey: PublicKey, mintPk: PublicKey): Promise<PublicKey> => {
     let associatedTokenAccountPubkey = (await PublicKey.findProgramAddress(
         [

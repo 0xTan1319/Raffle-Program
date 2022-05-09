@@ -17,7 +17,7 @@ use constants::*;
 use error::*;
 use utils::*;
 
-declare_id!("DfpiHaschjki2b4wCwVkNSPsh9L4wvC9h15eJRPVaHh8");
+declare_id!("Hd6vBon1NRw2ksRKEbY7ZB6PqYdKBseMdhSbvA4zpAtw");
 
 #[program]
 pub mod raffle {
@@ -218,9 +218,16 @@ pub mod raffle {
             raffle.winner_count = raffle.count;
         }
 
-        for j in 0..raffle.winner_count {
+        let count = raffle.winner_count;
+        let mut crt = 0;
+
+        while crt < count {
             let (player_address, bump) = Pubkey::find_program_address(
-                &[RANDOM_SEED.as_bytes(), timestamp.to_string().as_bytes()],
+                &[
+                    RANDOM_SEED.as_bytes(),
+                    crt.to_string().as_bytes(),
+                    timestamp.to_string().as_bytes(),
+                ],
                 &raffle::ID,
             );
             let char_vec: Vec<char> = player_address.to_string().chars().collect();
@@ -230,9 +237,18 @@ pub mod raffle {
             }
             mul += u64::from(char_vec[7]);
             let winner_index = mul % raffle.count;
-            raffle.winner[j as usize] = raffle.entrants[winner_index as usize];
-            raffle.entrants[winner_index as usize] = raffle.entrants[(raffle.count - 1) as usize];
-            raffle.count -= 1;
+            let mut flag = 0;
+
+            for j in 0..crt {
+                if raffle.winner[j as usize] == raffle.entrants[winner_index as usize] {
+                    flag = 1;
+                    break;
+                }
+            }
+            if flag == 0 {
+                raffle.winner[crt as usize] = raffle.entrants[winner_index as usize];
+                crt += 1;
+            }
         }
 
         Ok(())
