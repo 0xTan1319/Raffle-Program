@@ -18,10 +18,10 @@ import { Raffle } from '../target/types/raffle';
 
 const GLOBAL_AUTHORITY_SEED = "global-authority";
 
-const PROGRAM_ID = "Hd6vBon1NRw2ksRKEbY7ZB6PqYdKBseMdhSbvA4zpAtw";
-const BOOGA_TOKEN_MINT = new PublicKey("AsACVnuMa5jpmfp3BjArmb2qWg5A6HBkuXePwT37RrLY");
-const ZION_TOKEN_MINT = new PublicKey("AsACVnuMa5jpmfp3BjArmb2qWg5A6HBkuXePwT37RrLY");
-const RAFFLE_SIZE = 66152;
+const PROGRAM_ID = "6gN1UbdvbuFr1vLfa7srVvDutoM4t9FzWsoZrMBFDyXL";
+const BOOGA_TOKEN_MINT = new PublicKey("BGrCkH9iBjNrdDLJSpqD8EUVWx8qVD3vXvcJurVc1xsZ");
+const ZION_TOKEN_MINT = new PublicKey("A7rqejP8LKN8syXMr4tvcKjs2iJ4WtZjXNs1e6qP3m9g");
+const RAFFLE_SIZE = 66552;
 const DECIMALS = 1000000000;
 const BOOGA_DECIMALS = 100;
 const ZION_DECIMALS = 1000000000;

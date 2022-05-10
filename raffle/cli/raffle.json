@@ -335,6 +335,10 @@
             "type": "u64"
           },
           {
+            "name": "startTimestamp",
+            "type": "i64"
+          },
+          {
             "name": "endTimestamp",
             "type": "i64"
           },
@@ -364,6 +368,15 @@
             }
           },
           {
+            "name": "indexes",
+            "type": {
+              "array": [
+                "u64",
+                50
+              ]
+            }
+          },
+          {
             "name": "winner",
             "type": {
               "array": [
@@ -377,7 +390,7 @@
             "type": {
               "array": [
                 "publicKey",
-                5000
+                2000
               ]
             }
           }

@@ -17,7 +17,7 @@ use constants::*;
 use error::*;
 use utils::*;
 
-declare_id!("Hd6vBon1NRw2ksRKEbY7ZB6PqYdKBseMdhSbvA4zpAtw");
+declare_id!("6gN1UbdvbuFr1vLfa7srVvDutoM4t9FzWsoZrMBFDyXL");
 
 #[program]
 pub mod raffle {
@@ -219,7 +219,7 @@ pub mod raffle {
         }
 
         let count = raffle.winner_count;
-        let mut crt = 0;
+        let mut crt: u64 = 0;
 
         while crt < count {
             let (player_address, bump) = Pubkey::find_program_address(
@@ -237,7 +237,7 @@ pub mod raffle {
             }
             mul += u64::from(char_vec[7]);
             let winner_index = mul % raffle.count;
-            let mut flag = 0;
+            let mut flag: u64 = 0;
 
             for j in 0..crt {
                 if raffle.winner[j as usize] == raffle.entrants[winner_index as usize] {
@@ -247,6 +247,7 @@ pub mod raffle {
             }
             if flag == 0 {
                 raffle.winner[crt as usize] = raffle.entrants[winner_index as usize];
+                raffle.indexes[crt as usize] = winner_index;
                 crt += 1;
             }
         }

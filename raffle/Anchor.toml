@@ -1,11 +1,11 @@
-[programs.devnet]
-raffle = "Hd6vBon1NRw2ksRKEbY7ZB6PqYdKBseMdhSbvA4zpAtw"
+[programs.mainnet]
+raffle = "6gN1UbdvbuFr1vLfa7srVvDutoM4t9FzWsoZrMBFDyXL"
 
 [registry]
 url = "https://anchor.projectserum.com"
 
 [provider]
-cluster = "devnet"
+cluster = "mainnet"
 wallet = "/home/ubuntu/.config/solana/id.json"
 
 [scripts]
