@@ -134,7 +134,7 @@ pub mod raffle {
         if timestamp > raffle.end_timestamp {
             return Err(RaffleError::RaffleEnded.into());
         }
-        if raffle.count + amount >= raffle.max_entrants {
+        if raffle.count + amount > raffle.max_entrants {
             return Err(RaffleError::NotEnoughTicketsLeft.into());
         }
 
