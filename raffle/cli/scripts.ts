@@ -26,7 +26,7 @@ const DECIMALS = 1000000000;
 const BOOGA_DECIMALS = 100;
 const ZION_DECIMALS = 1000000000;
 
-anchor.setProvider(anchor.Provider.local(web3.clusterApiUrl('devnet')));
+anchor.setProvider(anchor.Provider.local(web3.clusterApiUrl('mainnet-beta')));
 const solConnection = anchor.getProvider().connection;
 const payer = anchor.getProvider().wallet;
 console.log(payer.publicKey.toBase58());
@@ -52,7 +52,7 @@ const main = async () => {
     console.log('GlobalAuthority: ', globalAuthority.toBase58());
 
     // await initProject();
-    await createRaffle(payer.publicKey, new PublicKey("GF4XmpVKCf9aozU5igmr9sKNzDBkjvmiWujx8uC7Bnp4"), 1, 0, 0, 1652076787, 1, 1, 100);
+    // await createRaffle(payer.publicKey, new PublicKey("GF4XmpVKCf9aozU5igmr9sKNzDBkjvmiWujx8uC7Bnp4"), 1, 0, 0, 1652076787, 1, 1, 100);
     // await updateRafflePeriod(payer.publicKey, new PublicKey("HyomvqtLBjHhPty1P6dKzNf5gNow9qbfGkxj69pqBD8Z"), 1649355012);
     // await buyTicket(payer.publicKey, new PublicKey("14njy5aKYoAvz3Ut8ojfYULhEKbBDXcXidZ3xK6jZs7U"), 10);
     // await revealWinner(payer.publicKey, new PublicKey("14njy5aKYoAvz3Ut8ojfYULhEKbBDXcXidZ3xK6jZs7U"));
